@@ -68,7 +68,7 @@
 					x += xDir * tCoeff;
 					y += yDir * tCoeff;
 					animIndex += xDir > 0 ? 1 * tCoeff : -1 * tCoeff;
-					var animIndex2 = (animIndex % 5) >> 0;
+					var animIndex2 = (animIndex % 5) >> 0; //为了取整 除以2的0次方 并 floor
 
 					animIndex2 += animIndex2 < 0 ? 5 : 0;
 
@@ -87,7 +87,7 @@
 			}
 			var bouncyBoss = function(numBouncy, $drawTarget){
 				var bouncys = [];
-				var timer = timeInfo(40);
+				var timer = timeInfo(40);//timeinfo
 				for (var i = 0; i < numBouncy; i++) {
 					bouncys.push(bouncySprite({
 						images: 'sprite.png',
@@ -113,11 +113,11 @@
 				}
 				moveAll();
 			}
-			var timeInfo = function(goalFPS){
-			var oldTime, paused = true,
-				interCount = 0,
-				totalFPS = 0,
-				totalCoeff = 0;
+			var timeInfo = function(goalFPS){//goalFPS提供了一个目标的FPS，如果达不到会调整移动速度使其看起来像达到了
+				var oldTime, paused = true,//paused保证应用程序在开始或暂停之后，getInfo第一次被调用，确保长暂停后，传回的不是一个非常大的值
+					interCount = 0,
+					totalFPS = 0,
+					totalCoeff = 0;
 				return {
 					getInfo: function(){
 						if (paused === true) {
@@ -125,16 +125,16 @@
 							oldTime = +new Date();//+new Date() 等价于 new Date().getTime()
 							return {
 								elapsed: 0,
-								coeff: 0,
-								FPS: 0,
+								coeff: 0,//coeff 在移动和动画计算中所用的参数
+								FPS: 0,//FPS 从上次getInfo() 起所达到的FPS
 								averageFPS: 0,
 								averageCoeff: 0
 							}
 						};
 						var newTime = +new Date();
-						var elapsed = newTime - oldTime;
+						var elapsed = newTime - oldTime;//elapsed 从上次getInfo()调用开始的毫秒数
 						oldTime = newTime;
-						var FPS = 1000/elapsed;
+						var FPS = 1000/elapsed;//实际FPS
 						interCount++;
 						totalFPS += FPS;
 						var coeff = goalFPS / FPS;
@@ -143,8 +143,8 @@
 							elapsed: elapsed,
 							coeff: goalFPS / FPS,
 							FPS: FPS,
-							averageFPS: totalFPS / interCount,
-							averageCoeff: totalCoeff / interCount
+							averageFPS: totalFPS / interCount,//averageFPS 从第一次getInfo()起所达到的平均FPS
+							averageCoeff: totalCoeff / interCount//averageCoeff 平均参数
 						}
 					}
 					// pause: function(){
@@ -163,11 +163,18 @@
 			numBouncy: 10
 		}
 	})(jQuery);
-//elapsed 从上次getInfo()调用开始的毫秒数
-//coeff 在移动和动画计算中所用的参数
-//FPS 从上次getInfo() 起所达到的FPS
-//averageFPS 从第一次getInfo()起所达到的平均FPS
-//averageCoeff 平均参数
+
+//setInterval可能出现的情况是，调用函数的时间间隔会比执行函数的时间间隔小
+//有时可能连续发生，有时可能抛弃队列
+
+//setTimeout更具遇见性
+
+//不同浏览器，软硬件环境的帧率不同，表现为动画和移动速度，流畅度的表现
+//时间系数＝目标FPS／实际FPS
+//实际FPS，actualFPS＝1000/(endTime - startTime)
+
+
+
 
 
 	$(document).ready(function() {
